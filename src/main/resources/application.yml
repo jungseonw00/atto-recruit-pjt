@@ -1,0 +1,26 @@
+server:
+  port: 7070
+  datasource:
+    url: jdbc:h2:mem://localhost/~/test
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        auto_quote_keyword: false
+        globally_quoted_identifiers: false
+  profiles:
+    active: test
+
+logging:
+  level:
+    p6spy: debug
+spring:
+  profiles:
+    active: DEV
+  jpa:
+    open-in-view: false
