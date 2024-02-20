@@ -9,7 +9,7 @@ public enum ErrorCode {
 	ACCESS_TOKEN_EXPIRED(401, "C_001", "토큰이 만료되었습니다."),
 	HANDLE_ACCESS_DENIED(402, "C_002", "권한이 없습니다."),
 	MEMBER_NOT_FOUND(403, "C_003", "사용자 정보를 찾을 수 없습니다."),
-	DUPLICATE_MEMBER(404, "C_004", "이미 존재하는 아이디입니다."),
+	DUPLICATE_MEMBER(410, "C_010", "이미 존재하는 아이디입니다."),
 	HOST_NOT_FOUND(405, "C_005", "등록되지 않은 호스트입니다."),
 	DUPLICATE_NAME(406, "C_006", "이미 존재하는 이름입니다."),
 	DUPLICATE_IP(407, "C_007", "이미 존재하는 IP입니다."),

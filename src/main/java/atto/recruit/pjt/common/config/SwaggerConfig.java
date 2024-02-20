@@ -17,10 +17,8 @@ public class SwaggerConfig {
     public OpenAPI openAPI() {
 
         Info info = new Info()
-            .version("v1.0")
-            .title("삼쩜삼 백엔드 엔지니어 채용 과제 API 테스트");
+            .title("아토리서치 채용 과제 ");
 
-        // SecuritySecheme명
         String jwtSchemeName = "jwtAuth";
 
         // API 요청헤더에 인증정보 포함

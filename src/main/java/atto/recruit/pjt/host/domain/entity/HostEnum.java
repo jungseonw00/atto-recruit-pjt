@@ -1,9 +1,11 @@
-package atto.recruit.pjt.common;
+package atto.recruit.pjt.host.domain.entity;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @AllArgsConstructor
-public enum Host {
+@Getter
+public enum HostEnum {
 
 	MEMBER_LIMIT(100);
 

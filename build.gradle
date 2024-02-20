@@ -56,19 +56,18 @@ tasks.named('test') {
 }
 
 // Querydsl 설정부
-def querydslDir = "$buildDir/generated/querydsl"
+def generated = 'src/main/generated'
 
 // querydsl QClass 파일 생성 위치를 지정
 tasks.withType(JavaCompile) {
-	options.annotationProcessorGeneratedSourcesDirectory = file(querydslDir)
+	options.getGeneratedSourceOutputDirectory().set(file(generated))
 }
 
 // java source set 에 querydsl QClass 위치 추가
 sourceSets {
-	main.java.srcDirs += [ querydslDir ]
+	main.java.srcDirs += [ generated ]
 }
 
-// clean 태스크가 생성된 querydsl 디렉토리를 삭제하도록 설정
 clean {
-	delete querydslDir
+	delete file('src/main/generated')
 }

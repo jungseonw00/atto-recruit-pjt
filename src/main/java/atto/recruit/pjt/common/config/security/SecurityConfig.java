@@ -31,7 +31,7 @@ public class SecurityConfig {
 			.exceptionHandling(x -> x.authenticationEntryPoint(authenticationEntryPoint))
 			.authorizeHttpRequests(
 				request ->
-					 request.requestMatchers("v3/api-docs/**", "/member/**").permitAll()
+					 request.requestMatchers("swagger-ui/**", "v3/api-docs/**", "/member/**").permitAll()
 					 		.anyRequest().hasRole("ADMIN")
 			)
 			.addFilterBefore(new JwtFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)

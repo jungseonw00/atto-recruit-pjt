@@ -1,12 +1,11 @@
 package atto.recruit.pjt.host.application;
 
-import static atto.recruit.pjt.common.Host.MEMBER_LIMIT;
 import static atto.recruit.pjt.common.config.error.ErrorCode.DUPLICATE_IP;
-import static atto.recruit.pjt.common.config.error.ErrorCode.DUPLICATE_MEMBER;
 import static atto.recruit.pjt.common.config.error.ErrorCode.DUPLICATE_NAME;
 import static atto.recruit.pjt.common.config.error.ErrorCode.HOST_NOT_FOUND;
 import static atto.recruit.pjt.common.config.error.ErrorCode.HOST_REGISTER_DENIED;
 import static atto.recruit.pjt.common.config.error.ErrorCode.NOT_REACHABLE_HOST;
+import static atto.recruit.pjt.host.domain.entity.HostEnum.MEMBER_LIMIT;
 
 import atto.recruit.pjt.common.config.error.exception.CustomException;
 import atto.recruit.pjt.host.application.request.HostCreateRequest;
@@ -40,7 +39,7 @@ public class HostService {
 
 	public HostInfoResponse findHostInfo(Long id) {
 		Host entity = hostRepository.findById(id)
-			.orElseThrow(() -> new CustomException(DUPLICATE_MEMBER));
+			.orElseThrow(() -> new CustomException(HOST_NOT_FOUND));
 
 		boolean status = validateReachable(entity);
 

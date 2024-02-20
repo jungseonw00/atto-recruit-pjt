@@ -50,3 +50,8 @@ API 서버는 UI에 필요한 정보를 RSET API로 제공해야 합니다.
 [선택 사항]
 - 요구사항 외 구현상 제약 사항은 Readme에 작성
 - 시험 결과가 있는 경우, Readme에 작성
+
+
+---
+## 1. Swagger 주소
+> http://localhost:7070/swagger-ui/index.html
