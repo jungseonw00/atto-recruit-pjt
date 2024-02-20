@@ -40,7 +40,7 @@ public class HostController {
 
 	// 전체 조회
 	@GetMapping("/all")
-	public ResponseEntity<List<HostInfoResponse>> findAllHostInfo() {
+	public ResponseEntity<List<HostInfoResponse>> findAllHostInfo() throws IOException {
 		return ResponseEntity.ok(hostService.findAllHostInfo());
 	}
 

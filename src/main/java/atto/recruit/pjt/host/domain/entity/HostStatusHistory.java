@@ -1,8 +1,11 @@
 package atto.recruit.pjt.host.domain.entity;
 
+import static atto.recruit.pjt.host.domain.entity.AliveStatus.ALIVE;
+import static atto.recruit.pjt.host.domain.entity.AliveStatus.NOTALIVE;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
+import static java.time.LocalDateTime.now;
 import static lombok.AccessLevel.PROTECTED;
 
 import atto.recruit.pjt.common.BaseTimeEntity;
@@ -42,4 +45,12 @@ public class HostStatusHistory extends BaseTimeEntity<HostStatusHistory, Long> {
 	@Enumerated(STRING)
 	private AliveStatus aliveStatus;
 
+	public static HostStatusHistory create(Host entity, boolean status) {
+		HostStatusHistory hostHistory = HostStatusHistory.builder()
+			.host(entity)
+			.aliveTime(now())
+			.aliveStatus(status ? ALIVE : NOTALIVE)
+			.build();
+		return hostHistory;
+	}
 }

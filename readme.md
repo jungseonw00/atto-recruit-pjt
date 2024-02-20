@@ -19,7 +19,7 @@ API 서버는 UI에 필요한 정보를 RSET API로 제공해야 합니다.
 2. 호스트 현재 상태 조회 REST API 제공
    - 조회 단위는 하나의 호스트만 가능
    - Alive 상태 체크는 `InetAddress.isReachable()` 사용을 권장
-
+   
 3. 호스트 상태 모니터링 REST API 제공
    - 조회 대상은 호스트 단건, 전체
    - 조회 결과 필드에는 대상의 Alive 상태와 마지막 Alive 시간을 포함

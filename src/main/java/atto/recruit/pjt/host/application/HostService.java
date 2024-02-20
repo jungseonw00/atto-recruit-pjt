@@ -1,15 +1,11 @@
 package atto.recruit.pjt.host.application;
 
 import static atto.recruit.pjt.common.Host.MEMBER_LIMIT;
-import static atto.recruit.pjt.host.domain.entity.AliveStatus.alive;
-import static atto.recruit.pjt.host.domain.entity.AliveStatus.notAlive;
-import static java.time.LocalDateTime.now;
 
 import atto.recruit.pjt.host.domain.dto.request.HostCreateRequest;
 import atto.recruit.pjt.host.domain.dto.request.HostUpdateRequest;
 import atto.recruit.pjt.host.domain.dto.response.HostCreateResponse;
 import atto.recruit.pjt.host.domain.dto.response.HostInfoResponse;
-import atto.recruit.pjt.host.domain.entity.AliveStatus;
 import atto.recruit.pjt.host.domain.entity.Host;
 import atto.recruit.pjt.host.domain.entity.HostStatusHistory;
 import atto.recruit.pjt.host.repository.HostRepository;
@@ -47,8 +43,9 @@ public class HostService {
 		validateCnt();
 	}
 
-	private boolean isReachable(Long id) throws IOException {
-		return InetAddress.getByName(String.valueOf(id)).isReachable(1000);
+	private void isReachable(Host entity) throws IOException {
+		boolean reachable = InetAddress.getByName(String.valueOf(entity.getIp())).isReachable(1000);
+		HostStatusHistory.create(entity, reachable);
 	}
 
 	private void validateCnt() {
@@ -63,11 +60,14 @@ public class HostService {
 		return cnt > MEMBER_LIMIT.getNum();
 	}
 
-	public List<HostInfoResponse> findAllHostInfo() {
-//		return hostRepository.findAll()
-//			.stream()
-//			.map(HostInfoResponse::of)
-//			.toList();
+	public List<HostInfoResponse> findAllHostInfo() throws IOException {
+		List<Host> entities = hostRepository.findAll();
+		for (Host entity : entities) {
+			boolean status = InetAddress.getByName(String.valueOf(entity.getId())).isReachable(1000);
+			HostStatusHistory hostStatusHistory = HostStatusHistory.create(entity, status);
+			hostStatusHistoryRepository.save(hostStatusHistory);
+		}
+//		List<HostInfoResponse> all = hostStatusHistoryRepository.findAll();
 		return null;
 	}
 
@@ -75,24 +75,12 @@ public class HostService {
 		Host entity = hostRepository.findById(id)
 			.orElseThrow(() -> new IllegalArgumentException("해당 IP를 조회할 수 없습니다."));
 
-		AliveStatus status = validateStatus(id);
+		boolean status = InetAddress.getByName(String.valueOf(entity.getId())).isReachable(1000);
 
-		HostStatusHistory hostHistory = HostStatusHistory.builder()
-				.host(entity)
-				.aliveTime(now())
-				.aliveStatus(status)
-				.build();
+		HostStatusHistory hostStatusHistory = HostStatusHistory.create(entity, status);
+		hostStatusHistoryRepository.save(hostStatusHistory);
 
-		hostStatusHistoryRepository.save(hostHistory);
-
-		return HostInfoResponse.of(hostHistory);
-	}
-
-	private AliveStatus validateStatus(Long id) throws IOException {
-		if (InetAddress.getByName(String.valueOf(id)).isReachable(1000)) {
-			return alive;
-		}
-		return notAlive;
+		return HostInfoResponse.of(hostStatusHistory, entity);
 	}
 
 	public Long deleteHost(Long hostId) {
