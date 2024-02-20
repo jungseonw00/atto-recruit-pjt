@@ -1,26 +1,26 @@
 server:
   port: 7070
+
+spring:
+  profiles:
+    active: DEV
+
   datasource:
-    url: jdbc:h2:mem://localhost/~/test
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    url: jdbc:mysql://localhost:3306/study
+    username: root
+    password: tiger
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
       ddl-auto: create
+
     properties:
+      open-in-view: false
       hibernate:
-        auto_quote_keyword: false
-        globally_quoted_identifiers: false
-  profiles:
-    active: test
+      auto_quote_keyword: false
+      globally_quoted_identifiers: false
 
 logging:
   level:
     p6spy: debug
-spring:
-  profiles:
-    active: DEV
-  jpa:
-    open-in-view: false

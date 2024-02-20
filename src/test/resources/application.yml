@@ -1,5 +1,10 @@
 server:
   port: 7070
+
+spring:
+  profiles:
+    active: TEST
+
   datasource:
     url: jdbc:h2:mem://localhost/~/test
     username: sa
@@ -9,18 +14,28 @@ server:
   jpa:
     hibernate:
       ddl-auto: create
+
     properties:
       hibernate:
-        auto_quote_keyword: false
-        globally_quoted_identifiers: false
-  profiles:
-    active: test
+      auto_quote_keyword: false
+      globally_quoted_identifiers: false
+    open-in-view: false
 
 logging:
   level:
     p6spy: debug
-spring:
-  profiles:
-    active: TEST
-  jpa:
-    open-in-view: false
+
+jwt:
+  secret: c2Vvbndvb19qdW5nDQo=c2Vvbndvb19qdW5nDQo=c2Vvbndvb19qdW5nDQo=
+  access-token-valid-seconds: 7200 # 2 hour
+  refresh-token-valid-seconds: 604800 # 7 day
+
+springdoc:
+  packages-to-scan: atto.recruit.pjt
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    path: /
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operations-sorter: alpha
