@@ -6,7 +6,6 @@ import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
 import atto.recruit.pjt.common.BaseTimeEntity;
-import atto.recruit.pjt.host.application.request.HostCreateRequest;
 import atto.recruit.pjt.host.application.request.HostUpdateRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -38,13 +37,6 @@ public class Host extends BaseTimeEntity<Host, Long> {
 
 	@OneToMany(mappedBy = "host", cascade = ALL, fetch = LAZY)
 	private List<HostStatusHistory> hostStatusHistory = new ArrayList<>();
-
-	public static Host registerHost(HostCreateRequest request) {
-		Host entity = new Host();
-		entity.ip = request.getIp();
-		entity.name = request.getName();
-		return entity;
-	}
 
 	public void update(HostUpdateRequest request) {
 		this.name = request.getName();

@@ -26,7 +26,10 @@ public class HostRepositoryCustomImpl implements HostRepositoryCustom {
 
 	@Override
 	public HostCreateResponse registerHost(HostCreateRequest request) {
-		Host entity = Host.registerHost(request);
+		Host entity = Host.builder()
+				.name(request.getName())
+				.ip(request.getName())
+				.build();
 		em.persist(entity);
 		return HostCreateResponse.of(entity);
 	}
