@@ -31,7 +31,9 @@ public class Host extends BaseTimeEntity<Host, Long> {
 	@GeneratedValue(strategy = IDENTITY)
 	@Column(name = "host_id")
 	private Long id;
+
 	private String name;
+
 	private String ip;
 
 	@OneToMany(mappedBy = "host", cascade = ALL, fetch = LAZY)

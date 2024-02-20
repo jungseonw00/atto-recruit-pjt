@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class InitDB {
 
     private final InitService initService;
+
     @PostConstruct
     @Profile("DEV")
     public void init() {
