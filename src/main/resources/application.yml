@@ -24,3 +24,18 @@ spring:
 logging:
   level:
     p6spy: debug
+
+jwt:
+  secret: c2Vvbndvb19qdW5nDQo=c2Vvbndvb19qdW5nDQo=c2Vvbndvb19qdW5nDQo=
+  access-token-valid-seconds: 7200 # 2 hour
+  refresh-token-valid-seconds: 604800 # 7 day
+
+springdoc:
+  packages-to-scan: atto.recruit.pjt
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    path: /
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operations-sorter: alpha

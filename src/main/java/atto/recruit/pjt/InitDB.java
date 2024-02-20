@@ -1,6 +1,11 @@
 package atto.recruit.pjt;
 
+import static atto.recruit.pjt.host.domain.entity.AliveStatus.ALIVE;
+import static atto.recruit.pjt.host.domain.entity.AliveStatus.NOTALIVE;
+import static java.time.LocalDateTime.now;
+
 import atto.recruit.pjt.host.domain.entity.Host;
+import atto.recruit.pjt.host.domain.entity.HostStatusHistory;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +28,7 @@ public class InitDB {
         initService.dbInit3();
         initService.dbInit4();
         initService.dbInit5();
+        initService.dbInit6();
     }
 
     @Component
@@ -38,7 +44,16 @@ public class InitDB {
                     .name("홍길동")
                     .ip("192.168.0.1")
                     .build();
-            em.persist(entity);
+            em.persist(HostStatusHistory.builder()
+                .aliveStatus(ALIVE)
+                .aliveTime(now())
+                .host(entity)
+                .build());
+            em.persist(HostStatusHistory.builder()
+                .aliveStatus(NOTALIVE)
+                .aliveTime(now())
+                .host(entity)
+                .build());
         }
 
         public void dbInit2() {
@@ -47,7 +62,16 @@ public class InitDB {
                     .name("마석도")
                     .ip("192.168.0.2")
                     .build();
-            em.persist(entity);
+            em.persist(HostStatusHistory.builder()
+                .aliveStatus(ALIVE)
+                .aliveTime(now())
+                .host(entity)
+                .build());
+            em.persist(HostStatusHistory.builder()
+                .aliveStatus(NOTALIVE)
+                .aliveTime(now())
+                .host(entity)
+                .build());
         }
 
         public void dbInit3() {
@@ -56,7 +80,16 @@ public class InitDB {
                     .name("허석웅")
                     .ip("192.168.0.3")
                     .build();
-            em.persist(entity);
+            em.persist(HostStatusHistory.builder()
+                .aliveStatus(ALIVE)
+                .aliveTime(now())
+                .host(entity)
+                .build());
+            em.persist(HostStatusHistory.builder()
+                .aliveStatus(NOTALIVE)
+                .aliveTime(now())
+                .host(entity)
+                .build());
         }
 
         public void dbInit4() {
@@ -65,7 +98,16 @@ public class InitDB {
                     .name("엄규학")
                     .ip("172.16.254.1")
                     .build();
-            em.persist(entity);
+            em.persist(HostStatusHistory.builder()
+                .aliveStatus(ALIVE)
+                .aliveTime(now())
+                .host(entity)
+                .build());
+            em.persist(HostStatusHistory.builder()
+                .aliveStatus(NOTALIVE)
+                .aliveTime(now())
+                .host(entity)
+                .build());
         }
 
         public void dbInit5() {
@@ -74,7 +116,38 @@ public class InitDB {
                     .name("남제충")
                     .ip("172.16.254.2")
                     .build();
-            em.persist(entity);
+
+            em.persist(HostStatusHistory.builder()
+                .aliveStatus(ALIVE)
+                .aliveTime(now())
+                .host(entity)
+                .build());
+
+            em.persist(HostStatusHistory.builder()
+                .aliveStatus(NOTALIVE)
+                .aliveTime(now())
+                .host(entity)
+                .build());
+        }
+
+        public void dbInit6() {
+            log.info("Init6 = {}", this.getClass());
+            Host entity = Host.builder()
+                .name("김진태")
+                .ip("182.16.254.2")
+                .build();
+
+            em.persist(HostStatusHistory.builder()
+                .aliveStatus(NOTALIVE)
+                .aliveTime(now())
+                .host(entity)
+                .build());
+
+            em.persist(HostStatusHistory.builder()
+                .aliveStatus(NOTALIVE)
+                .aliveTime(now().minusDays(100L))
+                .host(entity)
+                .build());
         }
     }
 }

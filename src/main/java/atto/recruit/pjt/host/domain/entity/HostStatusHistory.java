@@ -2,6 +2,7 @@ package atto.recruit.pjt.host.domain.entity;
 
 import static atto.recruit.pjt.host.domain.entity.AliveStatus.ALIVE;
 import static atto.recruit.pjt.host.domain.entity.AliveStatus.NOTALIVE;
+import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
@@ -21,12 +22,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 @Entity
 @NoArgsConstructor(access = PROTECTED)
 @AllArgsConstructor
-@ToString
 @Getter
 @Builder
 public class HostStatusHistory extends BaseTimeEntity<HostStatusHistory, Long> {
@@ -36,7 +35,7 @@ public class HostStatusHistory extends BaseTimeEntity<HostStatusHistory, Long> {
 	@Column(name = "host_status_history_id")
 	private Long id;
 
-	@ManyToOne(fetch = LAZY)
+	@ManyToOne(fetch = LAZY, cascade = ALL)
 	@JoinColumn(name = "host_id")
 	private Host host;
 
@@ -45,12 +44,11 @@ public class HostStatusHistory extends BaseTimeEntity<HostStatusHistory, Long> {
 	@Enumerated(STRING)
 	private AliveStatus aliveStatus;
 
-	public static HostStatusHistory create(Host entity, boolean status) {
-		HostStatusHistory hostHistory = HostStatusHistory.builder()
-			.host(entity)
+	public static HostStatusHistory create(Host host, boolean status) {
+		return HostStatusHistory.builder()
+			.host(host)
 			.aliveTime(now())
 			.aliveStatus(status ? ALIVE : NOTALIVE)
 			.build();
-		return hostHistory;
 	}
 }

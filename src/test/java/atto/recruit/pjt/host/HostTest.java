@@ -1,16 +1,14 @@
 package atto.recruit.pjt.host;
 
 import static atto.recruit.pjt.host.domain.entity.AliveStatus.ALIVE;
-import static atto.recruit.pjt.host.domain.entity.AliveStatus.NOTALIVE;
 import static atto.recruit.pjt.host.domain.entity.QHost.host;
 import static atto.recruit.pjt.host.domain.entity.QHostStatusHistory.hostStatusHistory;
 import static com.querydsl.core.types.Projections.constructor;
 import static java.time.LocalDateTime.now;
-import static java.util.stream.Collectors.toList;
 
 import atto.recruit.pjt.host.application.HostService;
-import atto.recruit.pjt.host.domain.dto.request.HostCreateRequest;
-import atto.recruit.pjt.host.domain.dto.response.HostInfoResponse;
+import atto.recruit.pjt.host.application.request.HostCreateRequest;
+import atto.recruit.pjt.host.application.response.HostInfoResponse;
 import atto.recruit.pjt.host.domain.entity.Host;
 import atto.recruit.pjt.host.domain.entity.HostStatusHistory;
 import atto.recruit.pjt.host.repository.HostRepository;
@@ -19,9 +17,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import java.io.IOException;
 import java.net.InetAddress;
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Stream;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -119,42 +115,30 @@ public class HostTest {
 	    // given
 		queryFactory = new JPAQueryFactory(em);
 
-		List<HostInfoResponse> entities = queryFactory
-			.select(constructor(HostInfoResponse.class,
-					hostStatusHistory.host.id,
-					host.name,
-					host.ip,
-					hostStatusHistory.aliveStatus,
-					hostStatusHistory.aliveTime.max()))
-			.from(hostStatusHistory)
-			.join(hostStatusHistory.host, host)
-			.groupBy(hostStatusHistory.host.id)
-			.fetch();
-
-		List<Long> collect = entities.stream()
-			.filter(entity -> entity.getAliveStatus().equals(NOTALIVE))
-			.map(HostInfoResponse::getHostId)
-			.collect(toList());
-
-		List<HostInfoResponse> entities2 = queryFactory
-			.select(constructor(HostInfoResponse.class,
-				hostStatusHistory.host.id,
+		// 1. 호스트 별 가장 최근의 값인 host_status_
+		List<HostInfoResponse> entities = queryFactory.select(constructor(HostInfoResponse.class,
+				host.id,
+				hostStatusHistory.id.max(),
 				host.name,
 				host.ip,
 				hostStatusHistory.aliveStatus,
 				hostStatusHistory.aliveTime.max()))
-			.from(hostStatusHistory)
-			.join(hostStatusHistory.host, host)
-			.where(hostStatusHistory.id.in(collect).and(hostStatusHistory.aliveStatus.eq(ALIVE)))
-			.groupBy(hostStatusHistory.host.id)
+			.from(host)
+			.leftJoin(host.hostStatusHistory, hostStatusHistory)
+			.on(hostStatusHistory.aliveStatus.eq(ALIVE))
+			.groupBy(host.id)
 			.fetch();
 
-		List<HostInfoResponse> result = Stream.concat(entities.stream(), entities2.stream())
-			.sorted(Comparator.comparing(HostInfoResponse::getHostId))
-			.collect(toList());
-
-		for (HostInfoResponse hostInfoResponse : result) {
-			log.info("result => {}", hostInfoResponse);
+		for (HostInfoResponse entity : entities) {
+			System.out.println("entity = " + entity);
 		}
+	}
+
+	@Test
+	void validate() {
+	    // given
+	    String path = "/membe";
+		System.out.println(path.startsWith("/member"));
+
 	}
 }

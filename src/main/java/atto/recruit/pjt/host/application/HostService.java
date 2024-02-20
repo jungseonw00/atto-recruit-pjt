@@ -1,11 +1,19 @@
 package atto.recruit.pjt.host.application;
 
 import static atto.recruit.pjt.common.Host.MEMBER_LIMIT;
+import static atto.recruit.pjt.common.config.error.ErrorCode.DUPLICATE_IP;
+import static atto.recruit.pjt.common.config.error.ErrorCode.DUPLICATE_MEMBER;
+import static atto.recruit.pjt.common.config.error.ErrorCode.DUPLICATE_NAME;
+import static atto.recruit.pjt.common.config.error.ErrorCode.HOST_NOT_FOUND;
+import static atto.recruit.pjt.common.config.error.ErrorCode.HOST_REGISTER_DENIED;
+import static atto.recruit.pjt.common.config.error.ErrorCode.NOT_REACHABLE_HOST;
 
-import atto.recruit.pjt.host.domain.dto.request.HostCreateRequest;
-import atto.recruit.pjt.host.domain.dto.request.HostUpdateRequest;
-import atto.recruit.pjt.host.domain.dto.response.HostCreateResponse;
-import atto.recruit.pjt.host.domain.dto.response.HostInfoResponse;
+import atto.recruit.pjt.common.config.error.exception.CustomException;
+import atto.recruit.pjt.host.application.request.HostCreateRequest;
+import atto.recruit.pjt.host.application.request.HostUpdateRequest;
+import atto.recruit.pjt.host.application.response.HostCreateResponse;
+import atto.recruit.pjt.host.application.response.HostInfoResponse;
+import atto.recruit.pjt.host.application.response.HostUpdateResponse;
 import atto.recruit.pjt.host.domain.entity.Host;
 import atto.recruit.pjt.host.domain.entity.HostStatusHistory;
 import atto.recruit.pjt.host.repository.HostRepository;
@@ -25,57 +33,16 @@ public class HostService {
 	private final HostRepository hostRepository;
 	private final HostStatusHistoryRepository hostStatusHistoryRepository;
 
-	public HostCreateResponse registerHost(Long id, HostCreateRequest request) {
+	public HostCreateResponse registerHost(HostCreateRequest request) {
 		validateRegisterHost(request);
 		return hostRepository.registerHost(request);
 	}
 
-	private void validateRegisterHost(HostCreateRequest request) {
-
-		hostRepository.findByName(request.getName()).ifPresent(m -> {
-			throw new IllegalArgumentException("이미 존재하는 이름입니다.");
-		});
-
-		hostRepository.findByIp(request.getIp()).ifPresent(m -> {
-			throw new IllegalArgumentException("이미 존재하는 IP입니다.");
-		});
-
-		validateCnt();
-	}
-
-	private void isReachable(Host entity) throws IOException {
-		boolean reachable = InetAddress.getByName(String.valueOf(entity.getIp())).isReachable(1000);
-		HostStatusHistory.create(entity, reachable);
-	}
-
-	private void validateCnt() {
-		Long cnt = hostRepository.count();
-
-		if (validateMemberLimit(cnt)) {
-			throw new IllegalArgumentException("호스트의 수는 100개를 넘을 수 없습니다.");
-		}
-	}
-
-	private static boolean validateMemberLimit(Long cnt) {
-		return cnt > MEMBER_LIMIT.getNum();
-	}
-
-	public List<HostInfoResponse> findAllHostInfo() throws IOException {
-		List<Host> entities = hostRepository.findAll();
-		for (Host entity : entities) {
-			boolean status = InetAddress.getByName(String.valueOf(entity.getId())).isReachable(1000);
-			HostStatusHistory hostStatusHistory = HostStatusHistory.create(entity, status);
-			hostStatusHistoryRepository.save(hostStatusHistory);
-		}
-//		List<HostInfoResponse> all = hostStatusHistoryRepository.findAll();
-		return null;
-	}
-
-	public HostInfoResponse findHostInfo(Long id) throws IOException {
+	public HostInfoResponse findHostInfo(Long id) {
 		Host entity = hostRepository.findById(id)
-			.orElseThrow(() -> new IllegalArgumentException("해당 IP를 조회할 수 없습니다."));
+			.orElseThrow(() -> new CustomException(DUPLICATE_MEMBER));
 
-		boolean status = InetAddress.getByName(String.valueOf(entity.getId())).isReachable(1000);
+		boolean status = validateReachable(entity);
 
 		HostStatusHistory hostStatusHistory = HostStatusHistory.create(entity, status);
 		hostStatusHistoryRepository.save(hostStatusHistory);
@@ -83,15 +50,60 @@ public class HostService {
 		return HostInfoResponse.of(hostStatusHistory, entity);
 	}
 
+	public List<HostInfoResponse> findAllHostInfo() {
+		List<Host> entities = hostRepository.findAll();
+		entities.forEach(entity -> {
+			boolean status = validateReachable(entity);
+			HostStatusHistory hostStatusHistory = HostStatusHistory.create(entity, status);
+			hostStatusHistoryRepository.save(hostStatusHistory);
+		});
+		return hostRepository.findAllHostStatusHistory();
+	}
+
 	public Long deleteHost(Long hostId) {
+		hostRepository.findById(hostId)
+			.orElseThrow(() -> new CustomException(HOST_NOT_FOUND));
 		hostRepository.deleteById(hostId);
 		return hostId;
 	}
 
-	public Long updateHost(Long id, HostUpdateRequest request) {
+	public HostUpdateResponse updateHost(Long id, HostUpdateRequest request) {
 		Host entity = hostRepository.findById(id)
-			.orElseThrow(() -> new IllegalArgumentException("등록된 호스트를 찾을 수 없습니다."));
+			.orElseThrow(() -> new CustomException(HOST_NOT_FOUND));
 		entity.update(request);
-		return entity.getId();
+		return HostUpdateResponse.of(entity);
+	}
+
+	private void validateRegisterHost(HostCreateRequest request) {
+
+		hostRepository.findByName(request.getName()).ifPresent(m -> {
+			throw new CustomException(DUPLICATE_NAME);
+		});
+
+		hostRepository.findByIp(request.getIp()).ifPresent(m -> {
+			throw new CustomException(DUPLICATE_IP);
+		});
+
+		validateCnt();
+	}
+
+	private boolean validateMemberLimit(Long cnt) {
+		return cnt > MEMBER_LIMIT.getNum();
+	}
+
+	private boolean validateReachable(Host entity) {
+		try {
+			return InetAddress.getByName(String.valueOf(entity.getId())).isReachable(1000);
+		} catch (IOException e) {
+			throw new CustomException(NOT_REACHABLE_HOST);
+		}
+	}
+
+	private void validateCnt() {
+		Long cnt = hostRepository.count();
+
+		if (validateMemberLimit(cnt)) {
+			throw new CustomException(HOST_REGISTER_DENIED);
+		}
 	}
 }

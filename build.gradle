@@ -24,7 +24,7 @@ repositories {
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
-//	implementation 'org.springframework.boot:spring-boot-starter-security'
+	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'com.github.gavlyukovskiy:p6spy-spring-boot-starter:1.9.1'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
 	runtimeOnly 'com.mysql:mysql-connector-j'
@@ -56,18 +56,19 @@ tasks.named('test') {
 }
 
 // Querydsl 설정부
-def generated = 'src/main/generated'
+def querydslDir = "$buildDir/generated/querydsl"
 
 // querydsl QClass 파일 생성 위치를 지정
 tasks.withType(JavaCompile) {
-	options.getGeneratedSourceOutputDirectory().set(file(generated))
+	options.annotationProcessorGeneratedSourcesDirectory = file(querydslDir)
 }
 
 // java source set 에 querydsl QClass 위치 추가
 sourceSets {
-	main.java.srcDirs += [ generated ]
+	main.java.srcDirs += [ querydslDir ]
 }
 
+// clean 태스크가 생성된 querydsl 디렉토리를 삭제하도록 설정
 clean {
-	delete file('src/main/generated')
+	delete querydslDir
 }

@@ -11,5 +11,4 @@ public interface HostRepository extends JpaRepository<Host, Long>, HostRepositor
 	Optional<Host> findByName(String name);
 	Optional<Host> findByIp(String ip);
 	long count();
-	Optional<Long> save(Long id);
 }

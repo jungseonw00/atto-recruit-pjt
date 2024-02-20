@@ -3,13 +3,13 @@ server:
 
 spring:
   profiles:
-    active: TEST
+    active: DEV
 
   datasource:
-    url: jdbc:h2:mem://localhost/~/test
-    username: sa
-    password:
-    driver-class-name: org.h2.Driver
+    url: jdbc:mysql://localhost:3306/study
+    username: root
+    password: tiger
+    driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
     hibernate:
