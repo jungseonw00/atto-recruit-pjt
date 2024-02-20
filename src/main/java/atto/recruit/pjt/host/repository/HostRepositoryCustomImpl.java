@@ -1,9 +1,12 @@
 package atto.recruit.pjt.host.repository;
 
-import static atto.recruit.pjt.host.entity.QHost.host;
-
-import atto.recruit.pjt.host.dto.HostCreateRequest;
+import atto.recruit.pjt.host.domain.dto.request.HostCreateRequest;
+import atto.recruit.pjt.host.domain.dto.request.HostInfoRequest;
+import atto.recruit.pjt.host.domain.dto.response.HostCreateResponse;
+import atto.recruit.pjt.host.domain.dto.response.HostInfoResponse;
+import atto.recruit.pjt.host.domain.entity.Host;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
@@ -14,31 +17,25 @@ import org.springframework.stereotype.Repository;
 public class HostRepositoryCustomImpl implements HostRepositoryCustom {
 
 	private final JPAQueryFactory queryFactory;
+	private final EntityManager em;
 
 	@Override
-	public Long validateDuplicateIp(HostCreateRequest request) {
-		return queryFactory
-				.select(host.count())
-				.from(host)
-				.where((host.ip.eq(request.getIp())))
-				.fetchOne();
-
+	public HostCreateResponse registerHost(HostCreateRequest request) {
+		Host entity = Host.registerHost(request);
+		em.persist(entity);
+		return HostCreateResponse.of(entity);
 	}
 
 	@Override
-	public Long validateDuplicateName(HostCreateRequest request) {
-		return queryFactory
-			.select(host.count())
-			.from(host)
-			.where(host.name.eq(request.getName()))
-			.fetchOne();
-	}
-
-	@Override
-	public Long validateHostCnt(HostCreateRequest request) {
-		return queryFactory
-			.select(host.count())
-			.from(host)
-			.fetchOne();
+	public HostInfoResponse findOneHost(Long id, HostInfoRequest request) {
+//		Host entity = queryFactory
+//				.select(host)
+//				.from(host)
+//				.where(host.id.eq(id)
+//				.and(host.ip.eq(request.getIp())
+//				.and(host.name.eq(request.getName()))))
+//				.fetchOne();
+//		return HostInfoResponse.of(entity);
+		return null;
 	}
 }

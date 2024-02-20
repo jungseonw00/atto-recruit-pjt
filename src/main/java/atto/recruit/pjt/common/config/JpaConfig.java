@@ -1,4 +1,4 @@
-package atto.recruit.pjt.host.config;
+package atto.recruit.pjt.common.config;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
