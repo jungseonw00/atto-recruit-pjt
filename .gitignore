@@ -35,3 +35,6 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### 별도 추가 ###
+src/main/generated/
