@@ -1,11 +1,15 @@
 package atto.recruit.pjt.host;
 
+import static atto.recruit.pjt.common.config.error.ErrorCode.DUPLICATE_IP;
 import static atto.recruit.pjt.host.domain.entity.AliveStatus.ALIVE;
 import static atto.recruit.pjt.host.domain.entity.QHost.host;
 import static atto.recruit.pjt.host.domain.entity.QHostStatusHistory.hostStatusHistory;
 import static com.querydsl.core.types.Projections.constructor;
 import static java.time.LocalDateTime.now;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import atto.recruit.pjt.common.config.error.exception.CustomException;
 import atto.recruit.pjt.host.application.HostService;
 import atto.recruit.pjt.host.application.request.HostCreateRequest;
 import atto.recruit.pjt.host.application.response.HostInfoResponse;
@@ -46,33 +50,34 @@ public class HostTest {
 	private JPAQueryFactory queryFactory;
 
 	@BeforeEach
-	void registerHost() {
+	void beforeEachRegisterHost() {
 		// given
-		Host entity = Host
-			.builder()
-			.name("AWS")
-			.ip("192.168.0.1")
-			.build();
+		Host entity = Host.builder()
+				.name("AWS")
+				.ip("192.168.0.1")
+				.build();
 		em.persist(entity);
 
-		HostStatusHistory statusHistory = HostStatusHistory.builder().aliveStatus(ALIVE).aliveTime(now())
-			.host(entity).build();
+		HostStatusHistory statusHistory = HostStatusHistory.builder()
+					.aliveStatus(ALIVE)
+					.aliveTime(now())
+					.host(entity)
+					.build();
 		em.persist(statusHistory);
 	}
 
 	@Test
-	void createHost() {
+	void registerHost() {
 		// given
-		Host entity = Host
-			.builder()
-			.name("AWS")
-			.ip("192.168.0.1")
-			.build();
-		em.persist(entity);
+		HostCreateRequest request = HostCreateRequest.builder()
+					.ip("142.250.66.100")
+					.name("google")
+					.build();
+		hostService.registerHost(request);
 
-		log.info("createdAt => {}", entity.getCreatedAt());
-		log.info("updatedAt => {}", entity.getUpdatedAt());
-		log.info("entity => {}", entity);
+		Host entity = hostRepository.findByName(request.getName()).get();
+
+		assertThat(request.getIp()).isEqualTo(entity.getIp());
 	}
 
 	@Test
@@ -80,7 +85,7 @@ public class HostTest {
 	void duplicateTest() {
 		// ip 중복
 		HostCreateRequest dto1 = HostCreateRequest.builder().ip("192.168.0.1").build();
-//		assertThat(hostRepository.validateDuplicateIp(dto1)).isEqualTo(1);
+//		assertThat(hostService.valid(dto1)).isEqualTo(1);
 
 		// name 중복
 		HostCreateRequest dto2 = HostCreateRequest.builder().name("AWS").build();
@@ -90,8 +95,8 @@ public class HostTest {
 	@Test
 	void duplicateTest2() {
 		HostCreateRequest dto1 = HostCreateRequest.builder().ip("192.168.0.1").build();
-//		assertThatThrownBy(() ->
-//			hostService.registerHost(dto1)).isInstanceOf(IllegalArgumentException.class).hasMessage("이미 등록된 IP입니다.");
+		assertThatThrownBy(() ->
+			hostService.registerHost(dto1)).isInstanceOf(CustomException.class).hasMessage(DUPLICATE_IP.getMessage());
 	}
 
 	@Test
@@ -132,13 +137,5 @@ public class HostTest {
 		for (HostInfoResponse entity : entities) {
 			System.out.println("entity = " + entity);
 		}
-	}
-
-	@Test
-	void validate() {
-	    // given
-	    String path = "/membe";
-		System.out.println(path.startsWith("/member"));
-
 	}
 }
