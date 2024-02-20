@@ -12,6 +12,7 @@ public enum ErrorCode {
 	DUPLICATE_MEMBER(410, "C_010", "이미 존재하는 아이디입니다."),
 	HOST_NOT_FOUND(405, "C_005", "등록되지 않은 호스트입니다."),
 	DUPLICATE_NAME(406, "C_006", "이미 존재하는 이름입니다."),
+	DUPLICATE_HOST_NAME(410, "C_010", "이미 존재하는 호스트명 입니다."),
 	DUPLICATE_IP(407, "C_007", "이미 존재하는 IP입니다."),
 	HOST_REGISTER_DENIED(408, "C_008", "호스트의 수는 100개를 넘을 수 없습니다."),
 	REFRESH_TOKEN_NOT_FOUND(409, "C_009", "갱신 토큰을 찾을 수 없습니다."),

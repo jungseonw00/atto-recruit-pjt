@@ -37,6 +37,7 @@ public class HostService {
 		return hostRepository.registerHost(request);
 	}
 
+	@Transactional(readOnly = true)
 	public HostInfoResponse findHostInfo(Long id) {
 		Host entity = hostRepository.findById(id)
 			.orElseThrow(() -> new CustomException(HOST_NOT_FOUND));

@@ -32,7 +32,7 @@ public class HostController {
 
 	@Operation(summary = "HOST를 등록한다.", responses = {
 		@ApiResponse(responseCode = "200", description = "HOST 등록 성공"),
-		@ApiResponse(responseCode = "406", description = "중복된 호스트 이름"),
+		@ApiResponse(responseCode = "410", description = "중복된 호스트 이름"),
 		@ApiResponse(responseCode = "407", description = "중복된 호스트 IP"),
 		@ApiResponse(responseCode = "408", description = "등록된 호스트 수가 100개 초과")
 	})
