@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public enum AliveStatus implements EnumMapperType {
 	ALIVE("연결가능"),
-	NOTALIVE("연결불가");
+	NOT_ALIVE("연결불가");
 
 	private final String status;
 

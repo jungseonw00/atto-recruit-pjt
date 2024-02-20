@@ -6,6 +6,7 @@ import static atto.recruit.pjt.common.config.error.ErrorCode.HOST_NOT_FOUND;
 import static atto.recruit.pjt.common.config.error.ErrorCode.HOST_REGISTER_DENIED;
 import static atto.recruit.pjt.common.config.error.ErrorCode.NOT_REACHABLE_HOST;
 import static atto.recruit.pjt.host.domain.entity.HostEnum.MEMBER_LIMIT;
+import static atto.recruit.pjt.host.domain.entity.HostEnum.REACHABLE_TIMEOUT_LIMIT;
 
 import atto.recruit.pjt.common.config.error.exception.CustomException;
 import atto.recruit.pjt.host.application.request.HostCreateRequest;
@@ -51,18 +52,22 @@ public class HostService {
 
 	public List<HostInfoResponse> findAllHostInfo() {
 		List<Host> entities = hostRepository.findAll();
+
 		entities.forEach(entity -> {
 			boolean status = validateReachable(entity);
 			HostStatusHistory hostStatusHistory = HostStatusHistory.create(entity, status);
 			hostStatusHistoryRepository.save(hostStatusHistory);
 		});
+
 		return hostRepository.findAllHostStatusHistory();
 	}
 
 	public Long deleteHost(Long hostId) {
 		hostRepository.findById(hostId)
 			.orElseThrow(() -> new CustomException(HOST_NOT_FOUND));
+
 		hostRepository.deleteById(hostId);
+
 		return hostId;
 	}
 
@@ -86,13 +91,13 @@ public class HostService {
 		validateCnt();
 	}
 
-	private boolean validateMemberLimit(Long cnt) {
+	private boolean validateMemberRegistrationLimit(Long cnt) {
 		return cnt > MEMBER_LIMIT.getNum();
 	}
 
 	private boolean validateReachable(Host entity) {
 		try {
-			return InetAddress.getByName(String.valueOf(entity.getId())).isReachable(1000);
+			return InetAddress.getByName(String.valueOf(entity.getIp())).isReachable(REACHABLE_TIMEOUT_LIMIT.getNum());
 		} catch (IOException e) {
 			throw new CustomException(NOT_REACHABLE_HOST);
 		}
@@ -101,7 +106,7 @@ public class HostService {
 	private void validateCnt() {
 		Long cnt = hostRepository.count();
 
-		if (validateMemberLimit(cnt)) {
+		if (validateMemberRegistrationLimit(cnt)) {
 			throw new CustomException(HOST_REGISTER_DENIED);
 		}
 	}

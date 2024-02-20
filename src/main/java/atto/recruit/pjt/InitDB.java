@@ -1,7 +1,7 @@
 package atto.recruit.pjt;
 
 import static atto.recruit.pjt.host.domain.entity.AliveStatus.ALIVE;
-import static atto.recruit.pjt.host.domain.entity.AliveStatus.NOTALIVE;
+import static atto.recruit.pjt.host.domain.entity.AliveStatus.NOT_ALIVE;
 import static java.time.LocalDateTime.now;
 
 import atto.recruit.pjt.host.domain.entity.Host;
@@ -51,7 +51,7 @@ public class InitDB {
                 .host(entity)
                 .build());
             em.persist(HostStatusHistory.builder()
-                .aliveStatus(NOTALIVE)
+                .aliveStatus(NOT_ALIVE)
                 .aliveTime(now())
                 .host(entity)
                 .build());
@@ -69,7 +69,7 @@ public class InitDB {
                 .host(entity)
                 .build());
             em.persist(HostStatusHistory.builder()
-                .aliveStatus(NOTALIVE)
+                .aliveStatus(NOT_ALIVE)
                 .aliveTime(now())
                 .host(entity)
                 .build());
@@ -87,7 +87,7 @@ public class InitDB {
                 .host(entity)
                 .build());
             em.persist(HostStatusHistory.builder()
-                .aliveStatus(NOTALIVE)
+                .aliveStatus(NOT_ALIVE)
                 .aliveTime(now())
                 .host(entity)
                 .build());
@@ -105,7 +105,7 @@ public class InitDB {
                 .host(entity)
                 .build());
             em.persist(HostStatusHistory.builder()
-                .aliveStatus(NOTALIVE)
+                .aliveStatus(NOT_ALIVE)
                 .aliveTime(now())
                 .host(entity)
                 .build());
@@ -125,7 +125,7 @@ public class InitDB {
                 .build());
 
             em.persist(HostStatusHistory.builder()
-                .aliveStatus(NOTALIVE)
+                .aliveStatus(NOT_ALIVE)
                 .aliveTime(now())
                 .host(entity)
                 .build());
@@ -139,13 +139,13 @@ public class InitDB {
                 .build();
 
             em.persist(HostStatusHistory.builder()
-                .aliveStatus(NOTALIVE)
+                .aliveStatus(NOT_ALIVE)
                 .aliveTime(now())
                 .host(entity)
                 .build());
 
             em.persist(HostStatusHistory.builder()
-                .aliveStatus(NOTALIVE)
+                .aliveStatus(NOT_ALIVE)
                 .aliveTime(now().minusDays(100L))
                 .host(entity)
                 .build());

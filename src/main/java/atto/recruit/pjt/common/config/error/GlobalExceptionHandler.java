@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(AccessDeniedException.class)
-    protected ResponseEntity<ErrorResponse> handleAccessDeniedException(AccessDeniedException e) {
+    protected ResponseEntity<ErrorResponse> handleAccessDeniedException(final AccessDeniedException e) {
         log.error("handleAccessDeniedException => {}", e.getMessage());
         final ErrorResponse response = ErrorResponse.of(HANDLE_ACCESS_DENIED);
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(HANDLE_ACCESS_DENIED.getStatus()));

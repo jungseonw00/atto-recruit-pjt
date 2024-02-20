@@ -17,17 +17,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Tag(name = "member", description = "회원 API")
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/member")
-@Tag(name = "member", description = "회원 API")
 public class MemberController {
 
 	private final MemberService memberService;
 
 	@Operation(summary = "회원을 등록한다.", responses = {
 		@ApiResponse(responseCode = "200", description = "정상적으로 회원가입 완료"),
-		@ApiResponse(responseCode = "410", description = "이미 존재하는 아이디")
+		@ApiResponse(responseCode = "411", description = "이미 존재하는 아이디")
 	})
 	@PostMapping
 	public ResponseEntity<MemberRegisterResponse> register(@RequestBody @Valid MemberRegisterRequest request) {

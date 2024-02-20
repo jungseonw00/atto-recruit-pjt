@@ -7,7 +7,8 @@ import lombok.Getter;
 @Getter
 public enum HostEnum {
 
-	MEMBER_LIMIT(100);
+	MEMBER_LIMIT(100),
+	REACHABLE_TIMEOUT_LIMIT(1000);
 
 	private final int num;
 

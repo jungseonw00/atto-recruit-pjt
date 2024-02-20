@@ -2,6 +2,7 @@ package atto.recruit.pjt.common.config.security;
 
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
 
+import atto.recruit.pjt.common.CustomLogoutSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,10 +32,10 @@ public class SecurityConfig {
 			.exceptionHandling(x -> x.authenticationEntryPoint(authenticationEntryPoint))
 			.authorizeHttpRequests(
 				request ->
-					 request.requestMatchers("swagger-ui/**", "v3/api-docs/**", "/member/**").permitAll()
-					 		.anyRequest().hasRole("ADMIN")
-			)
+					 request.requestMatchers("swagger-ui/**", "v3/api-docs/**", "member", "member/login").permitAll()
+					 		.anyRequest().hasRole("ADMIN"))
 			.addFilterBefore(new JwtFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
+			.logout(logout -> logout.logoutSuccessHandler(new CustomLogoutSuccessHandler()))
 			.build();
 	}
 

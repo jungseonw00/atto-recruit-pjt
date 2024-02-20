@@ -1,7 +1,7 @@
 package atto.recruit.pjt.host.domain.entity;
 
 import static atto.recruit.pjt.host.domain.entity.AliveStatus.ALIVE;
-import static atto.recruit.pjt.host.domain.entity.AliveStatus.NOTALIVE;
+import static atto.recruit.pjt.host.domain.entity.AliveStatus.NOT_ALIVE;
 import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.EnumType.STRING;
 import static jakarta.persistence.FetchType.LAZY;
@@ -48,7 +48,7 @@ public class HostStatusHistory extends BaseTimeEntity<HostStatusHistory, Long> {
 		return HostStatusHistory.builder()
 			.host(host)
 			.aliveTime(now())
-			.aliveStatus(status ? ALIVE : NOTALIVE)
+			.aliveStatus(status ? ALIVE : NOT_ALIVE)
 			.build();
 	}
 }

@@ -1,7 +1,6 @@
 package atto.recruit.pjt.host.domain.entity;
 
 import static jakarta.persistence.CascadeType.ALL;
-import static jakarta.persistence.FetchType.LAZY;
 import static jakarta.persistence.GenerationType.IDENTITY;
 import static lombok.AccessLevel.PROTECTED;
 
@@ -35,7 +34,7 @@ public class Host extends BaseTimeEntity<Host, Long> {
 
 	private String ip;
 
-	@OneToMany(mappedBy = "host", cascade = ALL, fetch = LAZY)
+	@OneToMany(mappedBy = "host", cascade = ALL)
 	private List<HostStatusHistory> hostStatusHistory = new ArrayList<>();
 
 	public void update(HostUpdateRequest request) {

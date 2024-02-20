@@ -16,7 +16,6 @@ import atto.recruit.pjt.host.application.response.HostInfoResponse;
 import atto.recruit.pjt.host.domain.entity.Host;
 import atto.recruit.pjt.host.domain.entity.HostStatusHistory;
 import atto.recruit.pjt.host.repository.HostRepository;
-import atto.recruit.pjt.host.repository.HostStatusHistoryRepository;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
 import java.io.IOException;
@@ -44,13 +43,11 @@ public class HostTest {
 	@Autowired
 	private HostRepository hostRepository;
 
-	@Autowired
-	private HostStatusHistoryRepository hostStatusHistoryRepository;
-
 	private JPAQueryFactory queryFactory;
 
 	@BeforeEach
 	void beforeEachRegisterHost() {
+		queryFactory = new JPAQueryFactory(em);
 		// given
 		Host entity = Host.builder()
 				.name("AWS")
@@ -117,10 +114,6 @@ public class HostTest {
 
 	@Test
 	void findAll() {
-	    // given
-		queryFactory = new JPAQueryFactory(em);
-
-		// 1. 호스트 별 가장 최근의 값인 host_status_
 		List<HostInfoResponse> entities = queryFactory.select(constructor(HostInfoResponse.class,
 				host.id,
 				hostStatusHistory.id.max(),
