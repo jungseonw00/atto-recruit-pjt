@@ -1,9 +1,9 @@
-package atto.recruit.pjt.member.application.request;
+package atto.recruit.pjt.member.presentation;
 
 import lombok.Getter;
 
 @Getter
-public class RefreshTokenRequest {
+public class DeleteTokenRequest {
 	private String accessToken;
 	private String refreshToken;
 }

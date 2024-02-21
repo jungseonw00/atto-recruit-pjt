@@ -14,6 +14,7 @@ import atto.recruit.pjt.member.application.response.MemberRegisterResponse;
 import atto.recruit.pjt.member.domain.entity.BearerToken;
 import atto.recruit.pjt.member.domain.entity.Member;
 import atto.recruit.pjt.member.domain.entity.Tokens;
+import atto.recruit.pjt.member.presentation.DeleteTokenRequest;
 import atto.recruit.pjt.member.repository.BearerTokenRepository;
 import atto.recruit.pjt.member.repository.MemberRepository;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -71,5 +72,9 @@ public class MemberService {
 			.orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
 
 		return tokenGenerator.create(member.getMemberId());
+	}
+
+	public void deleteToken(DeleteTokenRequest tokens) {
+
 	}
 }

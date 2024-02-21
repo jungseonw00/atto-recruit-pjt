@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -52,5 +53,10 @@ public class MemberController {
 	@PostMapping("/refresh")
 	public ResponseEntity<Tokens> refresh(@RequestBody RefreshTokenRequest request) {
 		return ResponseEntity.ok(memberService.refresh(request.getRefreshToken()));
+	}
+
+	@DeleteMapping
+	public ResponseEntity<Tokens> deleteTokens(@RequestBody DeleteTokenRequest request) {
+		return ResponseEntity.ok(memberService.deleteToken(request));
 	}
 }
