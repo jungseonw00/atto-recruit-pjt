@@ -1,5 +1,6 @@
 package atto.recruit.pjt.member.presentation;
 
+import atto.recruit.pjt.member.application.LogoutTokenResponse;
 import atto.recruit.pjt.member.application.MemberService;
 import atto.recruit.pjt.member.application.request.MemberLoginRequest;
 import atto.recruit.pjt.member.application.request.MemberRegisterRequest;
@@ -52,5 +53,14 @@ public class MemberController {
 	@PostMapping("/refresh")
 	public ResponseEntity<Tokens> refresh(@RequestBody RefreshTokenRequest request) {
 		return ResponseEntity.ok(memberService.refresh(request.getRefreshToken()));
+	}
+
+	@Operation(summary = "로그아웃을 한다.", responses = {
+		@ApiResponse(responseCode = "200", description = "기존 토큰을 만료시키는데 성공"),
+		@ApiResponse(responseCode = "401", description = "기존 토큰이 만료되었음"),
+	})
+	@PostMapping("/logout")
+	public ResponseEntity<LogoutTokenResponse> logout(@RequestBody LogoutTokenRequest request) {
+		return ResponseEntity.ok(memberService.logout(request));
 	}
 }

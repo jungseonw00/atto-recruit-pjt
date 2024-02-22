@@ -28,7 +28,8 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             String path = request.getServletPath();
-            if (!path.startsWith("/member")) {
+            log.info("path => {}", path);
+            if (validatePath(path)) {
                 String token = jwtTokenProvider.resolveToken(request);
                 if(token != null && jwtTokenProvider.validateToken(token)) {
                     Authentication authentication = jwtTokenProvider.getAuthentication(token);
@@ -46,5 +47,9 @@ public class JwtFilter extends OncePerRequestFilter {
             response.getWriter().flush();
         }
 
+    }
+
+    private static boolean validatePath(String path) {
+        return !path.equals("/member") && !path.equals("/member/login");
     }
 }

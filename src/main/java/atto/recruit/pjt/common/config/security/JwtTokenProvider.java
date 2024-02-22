@@ -1,7 +1,10 @@
 package atto.recruit.pjt.common.config.security;
 
+import static atto.recruit.pjt.common.config.error.ErrorCode.ACCESS_TOKEN_EXPIRED;
 import static java.lang.String.valueOf;
 
+import atto.recruit.pjt.common.config.error.exception.CustomException;
+import atto.recruit.pjt.member.repository.TokenBlacklistInfoRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -23,6 +26,7 @@ import org.springframework.stereotype.Component;
 public class JwtTokenProvider {
 
     private final CustomUserDetailService customUserDetailService;
+    private final TokenBlacklistInfoRepository tokenBlacklistInfoRepository;
 
     @Value("${jwt.secret}")
     private String secretKey;
@@ -36,7 +40,7 @@ public class JwtTokenProvider {
         return request.getHeader("Authorization");
     }
 
-    public Claims decode(String token) {
+    public Claims eeeewqeqweqweqwedecode(String token) {
         return Jwts.parserBuilder()
             .setSigningKey(secretKey)
             .build()
@@ -54,6 +58,13 @@ public class JwtTokenProvider {
     // Jwt 토큰의 유효성 + 만료일자 확인
     public boolean validateToken(String jwtToken) {
         Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(jwtToken.substring("Bearer ".length()));
-        return !claims.getBody().getExpiration().before(new Date());// 만료시간이 현재시간보다 전인지 확인
+        // 만료시간이 현재시간보다 전인지 확인
+        if (claims.getBody().getExpiration().before(new Date())) {
+            return false;
+        }
+        tokenBlacklistInfoRepository.validateBlacklist(jwtToken.substring("Bearer ".length())).ifPresent(t -> {
+            throw new CustomException(ACCESS_TOKEN_EXPIRED);
+        });
+        return true;
     }
 }

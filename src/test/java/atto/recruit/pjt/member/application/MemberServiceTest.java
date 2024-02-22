@@ -1,15 +1,20 @@
 package atto.recruit.pjt.member.application;
 
+import static atto.recruit.pjt.common.config.error.ErrorCode.ACCESS_TOKEN_EXPIRED;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import atto.recruit.pjt.common.config.error.exception.CustomException;
 import atto.recruit.pjt.common.config.security.JwtTokenProvider;
 import atto.recruit.pjt.member.application.request.MemberLoginRequest;
 import atto.recruit.pjt.member.application.request.MemberRegisterRequest;
 import atto.recruit.pjt.member.domain.entity.BearerToken;
 import atto.recruit.pjt.member.domain.entity.Member;
+import atto.recruit.pjt.member.domain.entity.TokenBlacklistInfo;
 import atto.recruit.pjt.member.domain.entity.Tokens;
 import atto.recruit.pjt.member.repository.BearerTokenRepository;
 import atto.recruit.pjt.member.repository.MemberRepository;
+import atto.recruit.pjt.member.repository.TokenBlacklistInfoRepository;
+import io.jsonwebtoken.Claims;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -36,6 +41,9 @@ class MemberServiceTest {
 	@Autowired
 	private BearerTokenRepository bearerTokenRepository;
 
+	@Autowired
+	private TokenBlacklistInfoRepository tokenBlacklistInfoRepository;
+
 	@BeforeEach
 	void eachRegister() {
 		MemberRegisterRequest member = MemberRegisterRequest.builder()
@@ -43,6 +51,14 @@ class MemberServiceTest {
 			.password("1234")
 			.build();
 		memberService.registerMember(member);
+	}
+
+	@Test
+	void test() {
+	    // given
+	    String path = "/member/logout";
+		boolean result = path.startsWith("/member");
+		System.out.println("result = " + result);
 	}
 
 	@Test
@@ -91,6 +107,28 @@ class MemberServiceTest {
 		BearerToken bearerToken = bearerTokenRepository.findByRefreshToken(refreshTokens.getRefreshToken()).get();
 
 		assertThat(refreshTokens.getRefreshToken()).isEqualTo(bearerToken.getRefreshToken());
+	}
+
+	@Test
+	void logout() {
+		// given
+		MemberLoginRequest member = MemberLoginRequest.builder()
+			.memberId("test_id")
+			.password("1234")
+			.build();
+
+		Tokens tokens = memberService.memberLogin(member);
+		// -- 여기까지 로그인 -- //
+
+		Claims decodeClaims = tokenProvider.decode(tokens.getAccessToken());
+
+		tokenBlacklistInfoRepository.validateBlacklist(tokens.getAccessToken());
+
+		TokenBlacklistInfo entity = TokenBlacklistInfo.registerBlacklist(tokens.getAccessToken(), decodeClaims.get("memberId", String.class));
+
+		tokenBlacklistInfoRepository.save(entity);
+
+		CustomException customException = new CustomException(ACCESS_TOKEN_EXPIRED);
 
 	}
 }
