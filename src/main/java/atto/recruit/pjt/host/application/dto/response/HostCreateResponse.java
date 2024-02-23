@@ -12,14 +12,12 @@ public class HostCreateResponse {
 	private Long hostId;
 	private String name;
 	private String ip;
-	private String userId;
 
-	public static HostCreateResponse of(Host entity, String userId) {
+	public static HostCreateResponse of(Host entity) {
 		return HostCreateResponse.builder()
 			.hostId(entity.getId())
 			.name(entity.getName())
 			.ip(entity.getIp())
-			.userId(userId)
 			.build();
 	}
 }

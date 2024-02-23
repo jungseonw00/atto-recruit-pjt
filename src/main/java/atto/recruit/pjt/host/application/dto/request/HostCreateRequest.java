@@ -14,6 +14,4 @@ public class HostCreateRequest {
 	private String name;
 	@ValidIpAddress
 	private String ip;
-	@NotBlank
-	private String userId;
 }

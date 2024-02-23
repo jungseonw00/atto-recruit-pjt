@@ -31,7 +31,7 @@ public class HostRepositoryCustomImpl implements HostRepositoryCustom {
 				.ip(request.getIp())
 				.build();
 		em.persist(entity);
-		return HostCreateResponse.of(entity, request.getUserId());
+		return HostCreateResponse.of(entity);
 	}
 
 	@Override
