@@ -1,4 +1,4 @@
-package atto.recruit.pjt.host.application.request;
+package atto.recruit.pjt.host.application.dto.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

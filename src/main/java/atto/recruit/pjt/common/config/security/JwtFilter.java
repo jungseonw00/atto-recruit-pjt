@@ -1,10 +1,5 @@
 package atto.recruit.pjt.common.config.security;
 
-import static atto.recruit.pjt.common.config.error.ErrorCode.ACCESS_TOKEN_EXPIRED;
-
-import atto.recruit.pjt.common.config.error.ErrorResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,30 +21,20 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        try {
-            String path = request.getServletPath();
-            log.info("path => {}", path);
-            if (validatePath(path)) {
-                String token = jwtTokenProvider.resolveToken(request);
-                if(token != null && jwtTokenProvider.validateToken(token)) {
-                    Authentication authentication = jwtTokenProvider.getAuthentication(token);
-                    log.info("authentication => {}", authentication);
-                    SecurityContextHolder.getContext().setAuthentication(authentication);
-                }
+        String path = request.getServletPath();
+        log.info("path => {}", path);
+        if (validatePath(path)) {
+            String token = jwtTokenProvider.resolveToken(request);
+            if (token != null && jwtTokenProvider.validateToken(token)) {
+                Authentication authentication = jwtTokenProvider.getAuthentication(token);
+                log.info("authentication => {}", authentication);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
             }
-            filterChain.doFilter(request, response);
-        } catch (ExpiredJwtException e) {
-            ErrorResponse res = ErrorResponse.of(ACCESS_TOKEN_EXPIRED);
-            response.setStatus(401);
-            response.setContentType("application/json");
-            response.setCharacterEncoding("utf-8");
-            response.getWriter().write(new ObjectMapper().writeValueAsString(res));
-            response.getWriter().flush();
         }
-
+        filterChain.doFilter(request, response);
     }
 
-    private static boolean validatePath(String path) {
+    private static boolean validatePath (String path) {
         return !path.equals("/member") && !path.equals("/member/login");
     }
 }

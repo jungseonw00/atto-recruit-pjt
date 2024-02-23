@@ -26,8 +26,6 @@ public class CustomUserDetailService implements UserDetailsService {
         List<GrantedAuthority> roles = new ArrayList<>();
         roles.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
 
-        log.info("roles => {}", roles);
-
         return memberRepository.findByMemberId(memberId)
             .map(m -> new AccountContext(m.getMemberId(), m.getPassword(), roles))
             .orElseThrow(() -> new UsernameNotFoundException("not found user"));

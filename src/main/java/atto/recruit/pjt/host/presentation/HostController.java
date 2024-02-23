@@ -1,11 +1,12 @@
 package atto.recruit.pjt.host.presentation;
 
+import atto.recruit.pjt.host.application.dto.response.HostDeleteResponse;
 import atto.recruit.pjt.host.application.HostService;
-import atto.recruit.pjt.host.application.request.HostCreateRequest;
-import atto.recruit.pjt.host.application.request.HostUpdateRequest;
-import atto.recruit.pjt.host.application.response.HostCreateResponse;
-import atto.recruit.pjt.host.application.response.HostInfoResponse;
-import atto.recruit.pjt.host.application.response.HostUpdateResponse;
+import atto.recruit.pjt.host.application.dto.request.HostCreateRequest;
+import atto.recruit.pjt.host.application.dto.request.HostUpdateRequest;
+import atto.recruit.pjt.host.application.dto.response.HostCreateResponse;
+import atto.recruit.pjt.host.application.dto.response.HostInfoResponse;
+import atto.recruit.pjt.host.application.dto.response.HostUpdateResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -65,7 +66,7 @@ public class HostController {
 		@ApiResponse(responseCode = "405", description = "등록되지 않은 호스트")
 	})
 	@DeleteMapping("/{id}")
-	public ResponseEntity<Long> deleteHost(@PathVariable Long id) {
+	public ResponseEntity<HostDeleteResponse> deleteHost(@PathVariable Long id) {
 		return ResponseEntity.ok(hostService.deleteHost(id));
 	}
 

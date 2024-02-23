@@ -8,14 +8,16 @@ import static atto.recruit.pjt.common.config.error.ErrorCode.REFRESH_TOKEN_NOT_F
 import atto.recruit.pjt.common.config.error.exception.CustomException;
 import atto.recruit.pjt.common.config.security.JwtTokenGenerator;
 import atto.recruit.pjt.common.config.security.JwtTokenProvider;
-import atto.recruit.pjt.member.application.request.MemberLoginRequest;
-import atto.recruit.pjt.member.application.request.MemberRegisterRequest;
-import atto.recruit.pjt.member.application.response.MemberRegisterResponse;
+import atto.recruit.pjt.member.application.dto.request.MemberLoginRequest;
+import atto.recruit.pjt.member.application.dto.request.MemberRegisterRequest;
+import atto.recruit.pjt.member.application.dto.response.LogoutTokenResponse;
+import atto.recruit.pjt.member.application.dto.response.MemberRegisterResponse;
 import atto.recruit.pjt.member.domain.entity.BearerToken;
 import atto.recruit.pjt.member.domain.entity.Member;
 import atto.recruit.pjt.member.domain.entity.TokenBlacklistInfo;
 import atto.recruit.pjt.member.domain.entity.Tokens;
-import atto.recruit.pjt.member.presentation.LogoutTokenRequest;
+import atto.recruit.pjt.member.application.dto.request.LogoutTokenRequest;
+import atto.recruit.pjt.member.application.dto.response.MemberLoginResponse;
 import atto.recruit.pjt.member.repository.BearerTokenRepository;
 import atto.recruit.pjt.member.repository.MemberRepository;
 import atto.recruit.pjt.member.repository.TokenBlacklistInfoRepository;
@@ -53,12 +55,13 @@ public class MemberService {
 		return MemberRegisterResponse.of(entity);
 	}
 
-	public Tokens memberLogin(MemberLoginRequest request) {
-		return memberRepository.findByMemberId(request.getMemberId())
+	public MemberLoginResponse memberLogin(MemberLoginRequest request) {
+		Tokens tokens = memberRepository.findByMemberId(request.getMemberId())
 			.filter(member -> passwordEncoder.matches(request.getPassword(), member.getPassword()))
 			.map(member -> tokenGenerator.create(member.getMemberId()))
 			.filter(token -> validateBlacklistToken(token.getAccessToken()))
 			.orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
+		return MemberLoginResponse.of(request.getMemberId(), tokens.getAccessToken());
 	}
 
 	private boolean validateBlacklistToken(String accessToken) {
@@ -85,20 +88,20 @@ public class MemberService {
 		return tokenGenerator.create(member.getMemberId());
 	}
 
-	public LogoutTokenResponse logout(LogoutTokenRequest request) {
-		try {
-			tokenProvider.decode(request.getAccessToken());
-		} catch (ExpiredJwtException e) {
-			throw new CustomException(ACCESS_TOKEN_EXPIRED);
-		}
+	public LogoutTokenResponse logout(LogoutTokenRequest request, String accessToken) {
+		tokenProvider.validateToken(accessToken);
 
 		TokenBlacklistInfo entity = TokenBlacklistInfo.builder()
-					.accessToken(request.getAccessToken())
-					.memberId(request.getMemberId())
-					.build();
+			.accessToken(getToken(accessToken))
+			.memberId(request.getMemberId())
+			.build();
 
 		tokenBlacklistInfoRepository.save(entity);
 
 		return LogoutTokenResponse.of(entity);
+	}
+
+	private static String getToken(String accessToken) {
+		return accessToken.substring("Bearer ".length());
 	}
 }

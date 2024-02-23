@@ -5,9 +5,9 @@ import static atto.recruit.pjt.host.domain.entity.QHost.host;
 import static atto.recruit.pjt.host.domain.entity.QHostStatusHistory.hostStatusHistory;
 import static com.querydsl.core.types.Projections.constructor;
 
-import atto.recruit.pjt.host.application.request.HostCreateRequest;
-import atto.recruit.pjt.host.application.response.HostCreateResponse;
-import atto.recruit.pjt.host.application.response.HostInfoResponse;
+import atto.recruit.pjt.host.application.dto.request.HostCreateRequest;
+import atto.recruit.pjt.host.application.dto.response.HostCreateResponse;
+import atto.recruit.pjt.host.application.dto.response.HostInfoResponse;
 import atto.recruit.pjt.host.domain.entity.Host;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
@@ -31,7 +31,7 @@ public class HostRepositoryCustomImpl implements HostRepositoryCustom {
 				.ip(request.getIp())
 				.build();
 		em.persist(entity);
-		return HostCreateResponse.of(entity);
+		return HostCreateResponse.of(entity, request.getUserId());
 	}
 
 	@Override

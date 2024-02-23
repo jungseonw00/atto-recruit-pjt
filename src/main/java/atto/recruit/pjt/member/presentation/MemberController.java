@@ -1,11 +1,13 @@
 package atto.recruit.pjt.member.presentation;
 
-import atto.recruit.pjt.member.application.LogoutTokenResponse;
+import atto.recruit.pjt.member.application.dto.request.LogoutTokenRequest;
+import atto.recruit.pjt.member.application.dto.response.LogoutTokenResponse;
 import atto.recruit.pjt.member.application.MemberService;
-import atto.recruit.pjt.member.application.request.MemberLoginRequest;
-import atto.recruit.pjt.member.application.request.MemberRegisterRequest;
-import atto.recruit.pjt.member.application.request.RefreshTokenRequest;
-import atto.recruit.pjt.member.application.response.MemberRegisterResponse;
+import atto.recruit.pjt.member.application.dto.request.MemberLoginRequest;
+import atto.recruit.pjt.member.application.dto.request.MemberRegisterRequest;
+import atto.recruit.pjt.member.application.dto.request.RefreshTokenRequest;
+import atto.recruit.pjt.member.application.dto.response.MemberLoginResponse;
+import atto.recruit.pjt.member.application.dto.response.MemberRegisterResponse;
 import atto.recruit.pjt.member.domain.entity.Tokens;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -15,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -37,10 +40,11 @@ public class MemberController {
 
 	@Operation(summary = "로그인을 한다.", responses = {
 		@ApiResponse(responseCode = "200", description = "계정 검증에 성공하면 Access, Refresh Token을 발급한다."),
+		@ApiResponse(responseCode = "401", description = "토큰이 만료되었음"),
 		@ApiResponse(responseCode = "403", description = "사용자 정보를 찾을 수 없음")
 	})
 	@PostMapping("/login")
-	public ResponseEntity<Tokens> login(@RequestBody @Valid MemberLoginRequest request) {
+	public ResponseEntity<MemberLoginResponse> login(@RequestBody @Valid MemberLoginRequest request) {
 		return ResponseEntity.ok(memberService.memberLogin(request));
 	}
 
@@ -60,7 +64,7 @@ public class MemberController {
 		@ApiResponse(responseCode = "401", description = "기존 토큰이 만료되었음"),
 	})
 	@PostMapping("/logout")
-	public ResponseEntity<LogoutTokenResponse> logout(@RequestBody LogoutTokenRequest request) {
-		return ResponseEntity.ok(memberService.logout(request));
+	public ResponseEntity<LogoutTokenResponse> logout(@RequestBody LogoutTokenRequest request, @RequestHeader("Authorization") String authorization) {
+		return ResponseEntity.ok(memberService.logout(request, authorization));
 	}
 }

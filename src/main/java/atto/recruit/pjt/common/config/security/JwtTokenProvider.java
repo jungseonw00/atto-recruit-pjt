@@ -40,7 +40,7 @@ public class JwtTokenProvider {
         return request.getHeader("Authorization");
     }
 
-    public Claims eeeewqeqweqweqwedecode(String token) {
+    public Claims decode(String token) {
         return Jwts.parserBuilder()
             .setSigningKey(secretKey)
             .build()

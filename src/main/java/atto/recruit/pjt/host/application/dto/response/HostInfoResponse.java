@@ -1,4 +1,4 @@
-package atto.recruit.pjt.host.application.response;
+package atto.recruit.pjt.host.application.dto.response;
 
 import atto.recruit.pjt.host.domain.entity.AliveStatus;
 import atto.recruit.pjt.host.domain.entity.Host;
@@ -8,10 +8,12 @@ import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
 @AllArgsConstructor
+@NoArgsConstructor
 public class HostInfoResponse {
 	private Long hostId;
 	private Long hostStatusHistoryId;

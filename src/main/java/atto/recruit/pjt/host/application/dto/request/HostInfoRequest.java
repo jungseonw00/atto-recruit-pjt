@@ -1,6 +1,6 @@
-package atto.recruit.pjt.member.application.request;
+package atto.recruit.pjt.host.application.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,9 +10,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-public class MemberLoginRequest {
-	@NotBlank
+public class HostInfoRequest {
+	@NotEmpty
 	private String memberId;
-	@NotBlank
-	private String password;
 }

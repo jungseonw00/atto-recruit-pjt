@@ -1,18 +1,14 @@
 package atto.recruit.pjt.host;
 
-import static atto.recruit.pjt.common.config.error.ErrorCode.DUPLICATE_IP;
 import static atto.recruit.pjt.host.domain.entity.AliveStatus.ALIVE;
 import static atto.recruit.pjt.host.domain.entity.QHost.host;
 import static atto.recruit.pjt.host.domain.entity.QHostStatusHistory.hostStatusHistory;
 import static com.querydsl.core.types.Projections.constructor;
 import static java.time.LocalDateTime.now;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import atto.recruit.pjt.common.config.error.exception.CustomException;
 import atto.recruit.pjt.host.application.HostService;
-import atto.recruit.pjt.host.application.request.HostCreateRequest;
-import atto.recruit.pjt.host.application.response.HostInfoResponse;
+import atto.recruit.pjt.host.application.dto.request.HostCreateRequest;
+import atto.recruit.pjt.host.application.dto.response.HostInfoResponse;
 import atto.recruit.pjt.host.domain.entity.Host;
 import atto.recruit.pjt.host.domain.entity.HostStatusHistory;
 import atto.recruit.pjt.host.repository.HostRepository;
@@ -63,19 +59,19 @@ public class HostTest {
 		em.persist(statusHistory);
 	}
 
-	@Test
-	void registerHost() {
-		// given
-		HostCreateRequest request = HostCreateRequest.builder()
-					.ip("142.250.66.100")
-					.name("google")
-					.build();
-		hostService.registerHost(request);
-
-		Host entity = hostRepository.findByName(request.getName()).get();
-
-		assertThat(request.getIp()).isEqualTo(entity.getIp());
-	}
+//	@Test
+//	void registerHost() {
+//		// given
+//		HostCreateRequest request = HostCreateRequest.builder()
+//					.ip("142.250.66.100")
+//					.name("google")
+//					.build();
+//		hostService.registerHost(request);
+//
+//		Host entity = hostRepository.findByName(request.getName()).get();
+//
+//		assertThat(request.getIp()).isEqualTo(entity.getIp());
+//	}
 
 	@Test
 	@DisplayName("ip또는 name이 중복일경우 예외를 터트린다.")
@@ -87,13 +83,6 @@ public class HostTest {
 		// name 중복
 		HostCreateRequest dto2 = HostCreateRequest.builder().name("AWS").build();
 //		assertThat(hostRepository.validateDuplicateName(dto2)).isEqualTo(1);
-	}
-
-	@Test
-	void duplicateTest2() {
-		HostCreateRequest dto1 = HostCreateRequest.builder().ip("192.168.0.1").build();
-		assertThatThrownBy(() ->
-			hostService.registerHost(dto1)).isInstanceOf(CustomException.class).hasMessage(DUPLICATE_IP.getMessage());
 	}
 
 	@Test

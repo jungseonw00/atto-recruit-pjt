@@ -1,4 +1,4 @@
-package atto.recruit.pjt.member.application.request;
+package atto.recruit.pjt.member.application.dto.request;
 
 import lombok.Getter;
 

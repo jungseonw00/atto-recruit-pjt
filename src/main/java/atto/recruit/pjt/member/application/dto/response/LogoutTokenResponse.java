@@ -1,4 +1,4 @@
-package atto.recruit.pjt.member.application;
+package atto.recruit.pjt.member.application.dto.response;
 
 import atto.recruit.pjt.member.domain.entity.TokenBlacklistInfo;
 import lombok.Builder;

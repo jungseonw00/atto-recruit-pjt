@@ -1,4 +1,4 @@
-package atto.recruit.pjt.host.application.request;
+package atto.recruit.pjt.host.application.dto.request;
 
 import atto.recruit.pjt.host.custom.ValidIpAddress;
 import jakarta.validation.constraints.NotBlank;
@@ -14,4 +14,6 @@ public class HostCreateRequest {
 	private String name;
 	@ValidIpAddress
 	private String ip;
+	@NotBlank
+	private String userId;
 }
