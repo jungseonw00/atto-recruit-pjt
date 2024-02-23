@@ -19,7 +19,6 @@ import java.net.InetAddress;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,32 +56,6 @@ public class HostTest {
 					.host(entity)
 					.build();
 		em.persist(statusHistory);
-	}
-
-//	@Test
-//	void registerHost() {
-//		// given
-//		HostCreateRequest request = HostCreateRequest.builder()
-//					.ip("142.250.66.100")
-//					.name("google")
-//					.build();
-//		hostService.registerHost(request);
-//
-//		Host entity = hostRepository.findByName(request.getName()).get();
-//
-//		assertThat(request.getIp()).isEqualTo(entity.getIp());
-//	}
-
-	@Test
-	@DisplayName("ip또는 name이 중복일경우 예외를 터트린다.")
-	void duplicateTest() {
-		// ip 중복
-		HostCreateRequest dto1 = HostCreateRequest.builder().ip("192.168.0.1").build();
-//		assertThat(hostService.valid(dto1)).isEqualTo(1);
-
-		// name 중복
-		HostCreateRequest dto2 = HostCreateRequest.builder().name("AWS").build();
-//		assertThat(hostRepository.validateDuplicateName(dto2)).isEqualTo(1);
 	}
 
 	@Test

@@ -1,13 +1,13 @@
 package atto.recruit.pjt.member.application;
 
-import static atto.recruit.pjt.common.config.error.ErrorCode.ACCESS_TOKEN_EXPIRED;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import atto.recruit.pjt.common.config.error.exception.CustomException;
 import atto.recruit.pjt.common.config.security.JwtTokenProvider;
 import atto.recruit.pjt.member.application.dto.request.MemberLoginRequest;
 import atto.recruit.pjt.member.application.dto.request.MemberRegisterRequest;
+import atto.recruit.pjt.member.application.dto.response.MemberLoginResponse;
 import atto.recruit.pjt.member.domain.entity.Member;
+import atto.recruit.pjt.member.domain.entity.Tokens;
 import atto.recruit.pjt.member.repository.BearerTokenRepository;
 import atto.recruit.pjt.member.repository.MemberRepository;
 import atto.recruit.pjt.member.repository.TokenBlacklistInfoRepository;
@@ -50,20 +50,14 @@ class MemberServiceTest {
 	}
 
 	@Test
-	void test() {
-	    // given
-	    String path = "/member/logout";
-		boolean result = path.startsWith("/member");
-		System.out.println("result = " + result);
-	}
-
-	@Test
+	@DisplayName("회원을 등록한다.")
 	void registerMember() {
 	    // given
 		MemberRegisterRequest member = MemberRegisterRequest.builder()
 						.memberId("test_id2")
 						.password("12345")
 						.build();
+
 		memberService.registerMember(member);
 
 		// when
@@ -74,6 +68,7 @@ class MemberServiceTest {
 	}
 
 	@Test
+	@DisplayName("로그인 후에 생성된 토큰을 검증한다.")
 	void memberLogin() {
 	    // given
 		MemberLoginRequest member = MemberLoginRequest.builder()
@@ -81,13 +76,14 @@ class MemberServiceTest {
 			.password("1234")
 			.build();
 
-		// when
-//		Tokens tokens = memberService.memberLogin(member);
-//
-//		assertThat(tokenProvider.validateToken("Bearer " + tokens.getAccessToken())).isTrue();
+//		 when
+		MemberLoginResponse response = memberService.memberLogin(member);
+
+		assertThat(tokenProvider.validateToken("Bearer " + response.getAccessToken())).isTrue();
 	}
 
 	@Test
+	@DisplayName("AccessToken을 재발급 받는다.")
 	void refreshToken() {
 	    // given
 		MemberLoginRequest member = MemberLoginRequest.builder()
@@ -96,35 +92,9 @@ class MemberServiceTest {
 			.build();
 
 		// when
-//		Tokens tokens = memberService.memberLogin(member);
+		MemberLoginResponse response = memberService.memberLogin(member);
 
-//		Tokens refreshTokens = memberService.refresh(tokens.getRefreshToken());
-
-//		BearerToken bearerToken = bearerTokenRepository.findByRefreshToken(refreshTokens.getRefreshToken()).get();
-
-//		assertThat(refreshTokens.getRefreshToken()).isEqualTo(bearerToken.getRefreshToken());
-	}
-
-	@Test
-	void logout() {
-		// given
-		MemberLoginRequest member = MemberLoginRequest.builder()
-			.memberId("test_id")
-			.password("1234")
-			.build();
-
-//		Tokens tokens = memberService.memberLogin(member);
-		// -- 여기까지 로그인 -- //
-
-//		Claims decodeClaims = tokenProvider.decode(tokens.getAccessToken());
-//
-//		tokenBlacklistInfoRepository.validateBlacklist(tokens.getAccessToken());
-
-//		TokenBlacklistInfo entity = TokenBlacklistInfo.registerBlacklist(tokens.getAccessToken(), decodeClaims.get("memberId", String.class));
-
-//		tokenBlacklistInfoRepository.save(entity);
-
-		CustomException customException = new CustomException(ACCESS_TOKEN_EXPIRED);
-
+		Tokens token = memberService.refresh(response.getRefreshToken());
+		assertThat(token.getRefreshToken()).isEqualTo(response.getRefreshToken());
 	}
 }

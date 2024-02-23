@@ -61,7 +61,7 @@ public class MemberService {
 			.map(member -> tokenGenerator.create(member.getMemberId()))
 			.filter(token -> validateBlacklistToken(token.getAccessToken()))
 			.orElseThrow(() -> new CustomException(MEMBER_NOT_FOUND));
-		return MemberLoginResponse.of(request.getMemberId(), tokens.getAccessToken());
+		return MemberLoginResponse.of(request.getMemberId(), tokens.getAccessToken(), tokens.getRefreshToken());
 	}
 
 	private boolean validateBlacklistToken(String accessToken) {
